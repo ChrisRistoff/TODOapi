@@ -1,4 +1,8 @@
-import express, { Express, Request, Response } from 'express';
+import express, {
+  Express,
+  Request,
+  Response
+} from 'express';
 
 import dotenv from 'dotenv';
 import { DataSource } from "typeorm";
@@ -6,6 +10,8 @@ import cors from 'cors';
 import bodyParser from 'body-parser';
 
 import { Task } from './src/tasks/tasks-entity';
+
+import { tasksRouter } from './src/tasks/tasks-router';
 
 // instantiate express
 const app: Express = express();
@@ -38,11 +44,6 @@ export const AppDataSource = new DataSource({
 // define a server port
 const port = process.env.PORT;
 
-// create a default route
-app.get('/', (req: Request, res: Response) => {
-  res.send('Hello World!');
-})
-
 AppDataSource.initialize()
 // listen to incoming requests
 
@@ -57,3 +58,6 @@ AppDataSource.initialize()
   err
   );
 });
+
+// routes 
+app.use('/', tasksRouter);
