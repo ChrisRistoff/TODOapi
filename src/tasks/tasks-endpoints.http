@@ -1,5 +1,17 @@
-### Fetch all tasks
+### GET all tasks
 
 GET http://localhost:3200/tasks
+Content-Type: application/json
 
-Content-type: application/json
+### POST a new task
+
+POST http://localhost:3200/tasks
+Content-Type: application/json
+
+{
+  "title": "Task 1",
+  "date": "2020-01-01",
+  "description": "Description 1",
+  "priority": "high",
+  "status": "todo"
+}
