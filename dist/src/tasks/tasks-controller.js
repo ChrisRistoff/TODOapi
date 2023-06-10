@@ -9,36 +9,59 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TaskController = void 0;
+exports.taskController = void 0;
 const __1 = require("../..");
 const tasks_entity_1 = require("./tasks-entity");
 const class_transformer_1 = require("class-transformer");
+const express_validator_1 = require("express-validator");
 class TaskController {
-    constructor() {
-        // get the task repository from the data source
-        this.taskRepository = __1.AppDataSource.getRepository(tasks_entity_1.Task);
-    }
     // @ts-ignore
     getAll(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 // get all tasks from the database await this.taskRepository.find();
-                let allTasks = yield this.taskRepository.find({
+                let allTasks = yield __1.AppDataSource.getRepository(tasks_entity_1.Task).find({
                     order: {
                         date: 'ASC',
                     },
                 });
                 // convert the tasks to plain objects
                 allTasks = (0, class_transformer_1.instanceToPlain)(allTasks);
-                return allTasks;
+                return res.json(allTasks).status(200);
             }
             catch (error) {
-                console.log(error);
-                res.status(500).send('Internal Server Error');
-                // return an empty array if there is an error
-                return [];
+                return res.json({ error: 'internal server error' }).status(500);
+            }
+        });
+    }
+    create(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            // check if there are any validation errors
+            const errors = (0, express_validator_1.validationResult)(req);
+            if (!errors.isEmpty()) {
+                // return the validation errors
+                return res.status(400).json({ errors: errors.array() });
+            }
+            // create a new task instance
+            const newTask = new tasks_entity_1.Task();
+            // set the task's properties
+            newTask.title = req.body.title;
+            newTask.date = req.body.date;
+            newTask.description = req.body.description;
+            newTask.status = req.body.status;
+            newTask.priority = req.body.priority;
+            // save the task to the database
+            try {
+                let savedTask = yield __1.AppDataSource.getRepository(tasks_entity_1.Task).save(newTask);
+                // convert the task to a plain object
+                savedTask = (0, class_transformer_1.instanceToPlain)(savedTask);
+                // return the newly created task
+                return res.json(savedTask).status(201);
+            }
+            catch (error) {
+                return res.json({ error: 'internal server error' }).status(500);
             }
         });
     }
 }
-exports.TaskController = TaskController;
+exports.taskController = new TaskController();
