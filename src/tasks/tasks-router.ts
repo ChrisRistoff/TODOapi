@@ -1,3 +1,4 @@
+import { TaskController } from './tasks-controller';
 import {
   Router,
   Request,
@@ -7,6 +8,9 @@ import {
 // new router
 export const tasksRouter: Router = Router();
 
-tasksRouter.get('/tasks', (req: Request, res: Response) => {
-  res.send('Hello World!');
+tasksRouter.get('/tasks',async (req: Request, res: Response) => {
+  const taskController = new TaskController();
+  const allTasks = await taskController.getAll(req, res);
+
+  res.send(allTasks);
 })
