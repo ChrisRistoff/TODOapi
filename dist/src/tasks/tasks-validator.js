@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createValidator = void 0;
+exports.updateValidator = exports.createValidator = void 0;
 const express_validator_1 = require("express-validator");
 const Priority_1 = require("../enums/Priority");
 const Status_1 = require("../enums/Status");
@@ -30,4 +30,21 @@ exports.createValidator = [
         .trim()
         .isIn([Status_1.Status.todo, Status_1.Status.inProgress, Status_1.Status.completed])
         .withMessage('Status must be todo, inProgress or done'),
+];
+exports.updateValidator = [
+    (0, express_validator_1.body)('id')
+        .not()
+        .isEmpty()
+        .withMessage('Id is required')
+        .trim()
+        .isString()
+        .withMessage('Id must be a string'),
+    (0, express_validator_1.body)('status')
+        .trim()
+        .isIn([Status_1.Status.todo, Status_1.Status.inProgress, Status_1.Status.completed])
+        .withMessage('Status must be todo, inProgress or done'),
+    (0, express_validator_1.body)('priority')
+        .trim()
+        .isIn([Priority_1.Priority.low, Priority_1.Priority.medium, Priority_1.Priority.high])
+        .withMessage('Priority must be low, medium or high'),
 ];

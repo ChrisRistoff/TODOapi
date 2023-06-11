@@ -61,6 +61,45 @@ class TaskController {
     return res.json({ error : 'internal server error' }).status(500);
     }
   }
-}
-export const taskController = new TaskController();
 
+  public async update(req: Request, res: Response): Promise<Response> {
+    // check if there are any validation errors
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+
+      // return the validation errors
+      return res.status(400).json({ errors: errors.array() });
+
+    }
+
+    // try to find the task by id
+    try {
+      const taskToUpdate: Task = await AppDataSource.getRepository(Task).findOneOrFail(req.body.id);
+
+      // if the task is not found, return a 404 response
+      if (!taskToUpdate) {
+        return res.status(404).json({ error: 'Task not found' });
+      }
+
+      // update the task's properties
+      taskToUpdate.status = req.body.status;
+      taskToUpdate.priority = req.body.priority;
+
+      // save the task to the database
+      let updatedTask: Task = await AppDataSource.getRepository(Task).save(taskToUpdate);
+
+      // convert the task to a plain object
+      updatedTask = instanceToPlain(updatedTask) as Task;
+
+      // return the updated task
+      return res.json(updatedTask).status(200);
+
+    }
+    catch (error) {
+      return res.json({ error : 'internal server error' }).status(500);
+    }
+  }
+}
+
+export const taskController = new TaskController();

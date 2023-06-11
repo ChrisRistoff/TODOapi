@@ -63,5 +63,35 @@ class TaskController {
             }
         });
     }
+    update(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            // check if there are any validation errors
+            const errors = (0, express_validator_1.validationResult)(req);
+            if (!errors.isEmpty()) {
+                // return the validation errors
+                return res.status(400).json({ errors: errors.array() });
+            }
+            // try to find the task by id
+            try {
+                const taskToUpdate = yield __1.AppDataSource.getRepository(tasks_entity_1.Task).findOneOrFail(req.body.id);
+                // if the task is not found, return a 404 response
+                if (!taskToUpdate) {
+                    return res.status(404).json({ error: 'Task not found' });
+                }
+                // update the task's properties
+                taskToUpdate.status = req.body.status;
+                taskToUpdate.priority = req.body.priority;
+                // save the task to the database
+                let updatedTask = yield __1.AppDataSource.getRepository(tasks_entity_1.Task).save(taskToUpdate);
+                // convert the task to a plain object
+                updatedTask = (0, class_transformer_1.instanceToPlain)(updatedTask);
+                // return the updated task
+                return res.json(updatedTask).status(200);
+            }
+            catch (error) {
+                return res.json({ error: 'internal server error' }).status(500);
+            }
+        });
+    }
 }
 exports.taskController = new TaskController();
