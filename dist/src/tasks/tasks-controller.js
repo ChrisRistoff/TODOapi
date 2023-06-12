@@ -108,5 +108,25 @@ class TaskController {
             }
         });
     }
+    delete(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                // get the task ID from the request
+                const taskId = req.body.id;
+                // check if the task exists in the database
+                const task = yield __1.AppDataSource.getRepository(tasks_entity_1.Task).findOne({ where: { id: taskId } });
+                if (!task) {
+                    return res.json({ error: 'task not found' }).status(404);
+                }
+                // delete the task
+                yield __1.AppDataSource.getRepository(tasks_entity_1.Task).delete(taskId);
+                // return a success response
+                return res.json({ message: 'task deleted successfully' }).status(200);
+            }
+            catch (error) {
+                return res.json({ error: 'internal server error on delete' }).status(500);
+            }
+        });
+    }
 }
 exports.taskController = new TaskController();

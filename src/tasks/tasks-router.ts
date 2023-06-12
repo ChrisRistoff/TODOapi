@@ -11,3 +11,5 @@ tasksRouter.get('/tasks',taskController.getAll)
 tasksRouter.post('/tasks', createValidator, taskController.create)
 
 tasksRouter.put('/tasks', updateValidator, taskController.update)
+
+tasksRouter.delete('/tasks', taskController.delete)

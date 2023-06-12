@@ -115,8 +115,31 @@ class TaskController {
     } catch (error) {
       return res.json({ error : 'internal server error on update' }).status(500);
     }
+  }
 
+  public async delete(req: Request, res: Response): Promise<Response> {
+    try {
+      // get the task ID from the request
+      const taskId: string = req.body.id;
 
+      // check if the task exists in the database
+      const task: Task | null = await AppDataSource.getRepository(Task).findOne(
+        { where: { id: taskId } }
+      );
+
+      if (!task) {
+        return res.json({ error : 'task not found' }).status(404);
+      }
+
+      // delete the task
+      await AppDataSource.getRepository(Task).delete(taskId);
+
+      // return a success response
+      return res.json({ message: 'task deleted successfully' }).status(200);
+
+    } catch (error) {
+      return res.json({ error : 'internal server error on delete' }).status(500);
+    }
   }
 }
 

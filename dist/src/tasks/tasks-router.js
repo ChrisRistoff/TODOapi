@@ -8,3 +8,4 @@ exports.tasksRouter = (0, express_1.Router)();
 exports.tasksRouter.get('/tasks', tasks_controller_1.taskController.getAll);
 exports.tasksRouter.post('/tasks', tasks_validator_1.createValidator, tasks_controller_1.taskController.create);
 exports.tasksRouter.put('/tasks', tasks_validator_1.updateValidator, tasks_controller_1.taskController.update);
+exports.tasksRouter.delete('/tasks', tasks_controller_1.taskController.delete);
