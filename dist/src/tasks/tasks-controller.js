@@ -15,8 +15,7 @@ const tasks_entity_1 = require("./tasks-entity");
 const class_transformer_1 = require("class-transformer");
 const express_validator_1 = require("express-validator");
 class TaskController {
-    // @ts-ignore
-    getAll(req, res) {
+    getAll(_, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 // get all tasks from the database await this.taskRepository.find();

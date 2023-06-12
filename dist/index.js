@@ -11,6 +11,7 @@ const cors_1 = __importDefault(require("cors"));
 const body_parser_1 = __importDefault(require("body-parser"));
 const tasks_entity_1 = require("./src/tasks/tasks-entity");
 const tasks_router_1 = require("./src/tasks/tasks-router");
+const swagger_1 = __importDefault(require("./swagger"));
 // instantiate express
 const app = (0, express_1.default)();
 dotenv_1.default.config();
@@ -21,6 +22,8 @@ app.use(body_parser_1.default.json());
 // enable cors
 // cors will allow requests from any origin to access this API
 app.use((0, cors_1.default)());
+// enable swagger
+(0, swagger_1.default)(app);
 // create database connection
 exports.AppDataSource = new typeorm_1.DataSource({
     type: 'postgres',

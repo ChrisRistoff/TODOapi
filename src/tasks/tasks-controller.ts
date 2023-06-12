@@ -7,8 +7,7 @@ import { UpdateResult } from 'typeorm';
 
 class TaskController {
 
-  // @ts-ignore
-  public async getAll(req: Request, res: Response): Promise<Response> {
+  public async getAll(_: Request, res: Response): Promise<Response> {
     try {
 
       // get all tasks from the database await this.taskRepository.find();
