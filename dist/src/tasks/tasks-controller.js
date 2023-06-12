@@ -71,25 +71,40 @@ class TaskController {
                 // return the validation errors
                 return res.status(400).json({ errors: errors.array() });
             }
-            // try to find the task by id
+            let task;
+            // get the task from the database by id
             try {
-                const taskToUpdate = yield __1.AppDataSource.getRepository(tasks_entity_1.Task).findOneOrFail(req.body.id);
-                // if the task is not found, return a 404 response
-                if (!taskToUpdate) {
-                    return res.status(404).json({ error: 'Task not found' });
-                }
-                // update the task's properties
-                taskToUpdate.status = req.body.status;
-                taskToUpdate.priority = req.body.priority;
-                // save the task to the database
-                let updatedTask = yield __1.AppDataSource.getRepository(tasks_entity_1.Task).save(taskToUpdate);
-                // convert the task to a plain object
+                task = yield __1.AppDataSource.getRepository(tasks_entity_1.Task).findOne({
+                    where: { id: req.body.id },
+                });
+            }
+            catch (error) {
+                return res.json({ error: 'internal server error' }).status(500);
+            }
+            if (!task) {
+                return res.json({ error: 'task not found' }).status(404);
+            }
+            // update the task's properties
+            task.status = req.body.status;
+            task.priority = req.body.priority;
+            // variable that will hold the updated task
+            let updatedTask;
+            // update the task
+            try {
+                updatedTask = yield __1.AppDataSource.getRepository(tasks_entity_1.Task).update(
+                // plainToInstance converts the plain object to an instance of the Task class
+                // this is necessary because the update method expects an instance of the Task class
+                task.id, (0, class_transformer_1.plainToInstance)(tasks_entity_1.Task, {
+                    status: req.body.status,
+                    priority: req.body.priority
+                }));
+                // convert the updated task to a plain object
                 updatedTask = (0, class_transformer_1.instanceToPlain)(updatedTask);
                 // return the updated task
                 return res.json(updatedTask).status(200);
             }
             catch (error) {
-                return res.json({ error: 'internal server error' }).status(500);
+                return res.json({ error: 'internal server error on update' }).status(500);
             }
         });
     }
